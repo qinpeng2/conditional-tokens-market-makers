@@ -164,10 +164,12 @@ contract FixedProductMarketMaker is ERC20, ERC1155TokenReceiver {
             }
 
             for(uint i = 0; i < poolBalances.length; i++) {
+                // 1000 * 861.17 / 1405.07 = 612.9
+                // 1000 - 612.9 = 387.1
                 uint remaining = addedFunds.mul(poolBalances[i]) / poolWeight;
                 sendBackAmounts[i] = addedFunds.sub(remaining);
             }
-
+            // 1100 * 1000 / 1405.07 = 784.07
             mintAmount = addedFunds.mul(poolShareSupply) / poolWeight;
         } else {
             if(distributionHint.length > 0) {
@@ -193,6 +195,7 @@ contract FixedProductMarketMaker is ERC20, ERC1155TokenReceiver {
         require(collateralToken.approve(address(conditionalTokens), addedFunds), "approval for splits failed");
         splitPositionThroughAllConditions(addedFunds);
 
+        // LP token
         _mint(msg.sender, mintAmount);
 
         conditionalTokens.safeBatchTransferFrom(address(this), msg.sender, positionIds, sendBackAmounts, "");
